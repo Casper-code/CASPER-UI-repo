@@ -1,7 +1,7 @@
 import wx
 import time
 from workers import WorkerThread
-from wx.core import Bitmap, MemoryDC, Colour, Mask
+from wx.core import Bitmap, MemoryDC
 from typing import Tuple
 
 from workers import ImageProcessorQueue
@@ -16,17 +16,7 @@ class UIReactor(WorkerThread):
         super(UIReactor, self).__init__(*args, **kwargs)
 
     def process_iteration(self):
-        start_time = time.time()
-        x = 99
-        y = 183
-        width = 1280
-        height = 720
         if self.memory_dc is None:
-            x = 99
-            y = 183
-            width = 1280
-            height = 720
-
             if self.bitmap is None:
                 screen_width, screen_height = self._get_screen_size()
                 self.bitmap = self._get_bitmap()
@@ -37,13 +27,16 @@ class UIReactor(WorkerThread):
 
         start_time = time.time()
         if self.memory_dc:
-            dc = wx.ScreenDC()
-            dc.Blit(
-                x, y,
-                width, height,
-                self.memory_dc,
-                0, 0
-            )
+            boxes = ImageProcessorQueue.get_processed_image()
+            if boxes:
+                for box in boxes:
+                    dc = wx.ScreenDC()
+                    dc.Blit(
+                        box[0], box[1],
+                        box[2], box[3],
+                        self.memory_dc,
+                        0, 0
+                    )
         if time.time() - start_time > 0:
             print(f"-----1 {1 / (time.time() - start_time)}")
 
