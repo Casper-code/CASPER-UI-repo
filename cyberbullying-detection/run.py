@@ -10,9 +10,7 @@ except ImportError:
 
 
 def text_detection_ocr():
-    print('Run1')
     while True:
-        print('Run2')
         img = pyautogui.screenshot()
         #img.save(r"screenshot.png")
         lines = ocr(img)
