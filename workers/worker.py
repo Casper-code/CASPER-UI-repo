@@ -14,11 +14,9 @@ class WorkerThread(Thread):
         pass
 
     def run(self):
-
         while self.working:
             self.process_iteration()
-            time.sleep(1/1000)
+            time.sleep(1 / 1000)
 
     def stop(self):
         self.working = False
-

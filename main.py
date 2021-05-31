@@ -1,14 +1,12 @@
-import wx
-import sys
-import time
-import signal
 from typing import List, Optional
-from workers import WorkerFactory, WorkerThread
+
+import wx
 from wx import PaintEvent
+
+from workers import WorkerFactory, WorkerThread
 
 
 class DetectRepaint(wx.Window):
-
     pass
 
 
@@ -17,7 +15,7 @@ class Event(PaintEvent):
 
 
 def main():
-
+    app = wx.App()
     # TODO Code here
     workers: Optional[List[WorkerThread]] = WorkerFactory.get_workers()
 

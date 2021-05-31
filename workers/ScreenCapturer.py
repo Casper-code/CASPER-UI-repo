@@ -1,12 +1,10 @@
-import time
-import wx
-import numpy
-import array
-import io
-from wx.core import DC, Bitmap, MemoryDC, Image
-from workers import WorkerThread
-from workers import ImageProcessorQueue
 from typing import Tuple
+
+import wx
+from wx.core import DC, Bitmap, MemoryDC
+
+from workers.imageQueue import ImageProcessorQueue
+from workers.worker import WorkerThread
 
 
 class ScreenCapturer(WorkerThread):
@@ -17,12 +15,14 @@ class ScreenCapturer(WorkerThread):
 
     @classmethod
     def take_screenshot(cls) -> bytes:
-
-        #start_time = time.time()
+        # start_time = time.time()
         bmp: Bitmap = cls._get_bitmap()
         memory_device_context: MemoryDC = cls._get_memory_device_context(bmp)
 
+        # bc = ImageProcessorQueue.array
+        # ImageProcessorQueue.array.clear()
         cls._copy_device_context(wx.ScreenDC(), memory_device_context, *cls._get_screen_size())
+        # ImageProcessorQueue.array = bc
 
         memory_device_context.SelectObject(wx.NullBitmap)
 
@@ -30,8 +30,7 @@ class ScreenCapturer(WorkerThread):
 
         buffer = bytes(width * height * 3)
         bmp.CopyToBuffer(buffer, wx.BitmapBufferFormat_RGB)
-
-        #if time.time() - start_time > 0:
+        # if time.time() - start_time > 0:
         #    print(f"-----1 {1 / (time.time() - start_time)}")
 
         return buffer

@@ -1,14 +1,16 @@
-from wx.core import Image
-from typing import Optional
 from queue import Queue, Empty
+from typing import Optional
 
 
 class ImageProcessorQueue(object):
     _pre_processing: Optional[Queue] = None
     _post_processing: Optional[Queue] = None
+    array = []
 
     @classmethod
     def put_input_image(cls, image: bytes):
+        if not cls._get_pre_process_queue().empty():
+            cls._get_pre_process_queue().get_nowait()
         cls._get_pre_process_queue().put_nowait(image)
 
     @classmethod
@@ -17,6 +19,17 @@ class ImageProcessorQueue(object):
             return cls._get_pre_process_queue().get_nowait()
         except Empty:
             return None
+
+    @classmethod
+    def get_processed_image(cls):
+        try:
+            return cls._get_post_process_queue().get_nowait()
+        except Empty:
+            return None
+
+    @classmethod
+    def put_processed_image(cls, image):
+        cls._get_post_process_queue().put_nowait(image)
 
     @classmethod
     def get_input_queue_size(cls) -> int:
